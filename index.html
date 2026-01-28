@@ -1,76 +1,53 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aptech Buzzer Control</title>
+    <title>Aptech | Buzzer IoT</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;500&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Roboto', sans-serif; background-color: #0f172a; }
-        .tech-font { font-family: 'Orbitron', sans-serif; }
-        .glass {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .btn-preset {
-            transition: all 0.2s;
-        }
-        .btn-preset.active {
-            background-color: #06b6d4;
-            color: black;
-            box-shadow: 0 0 15px #06b6d4;
-        }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        body { background: radial-gradient(circle at top, #1e293b, #0f172a); font-family: 'Inter', sans-serif; min-height: 100vh; color: white; }
+        .aptech-font { font-family: 'Orbitron', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; }
+        .neon-btn { transition: 0.3s; border: 1px solid #06b6d4; }
+        .neon-btn:hover { background: #06b6d4; color: #000; box-shadow: 0 0 20px #06b6d4; transform: translateY(-2px); }
+        .neon-btn.active { background: #06b6d4; color: black; box-shadow: 0 0 30px #06b6d4; }
+        .power-on { color: #22d3ee; filter: drop-shadow(0 0 10px #22d3ee); }
+        .power-off { color: #475569; }
     </style>
 </head>
-<body class="text-white min-h-screen flex flex-col items-center p-4">
+<body class="flex flex-col items-center p-6">
 
-    <header class="w-full max-w-md text-center mb-6 mt-4">
-        <h1 class="tech-font text-3xl text-cyan-400 font-bold tracking-widest">APTECH</h1>
-        <p class="text-slate-400 text-sm tracking-widest">BUZZER CONTROL SYSTEM</p>
-        <div id="connectionStatus" class="mt-2 text-xs text-red-500 font-bold flex justify-center items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> OFFLINE
-        </div>
-    </header>
+    <div class="w-full max-w-md">
+        <header class="text-center mb-10">
+            <h1 class="aptech-font text-4xl font-bold tracking-tighter bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">APTECH</h1>
+            <p class="text-slate-400 text-xs tracking-[0.3em] uppercase mt-2">Professional Buzzer System</p>
+        </header>
 
-    <main class="w-full max-w-md space-y-6">
-        
-        <div class="glass rounded-2xl p-6 text-center shadow-2xl shadow-cyan-900/20">
-            <h2 class="text-slate-300 mb-4 text-sm uppercase">Master Control</h2>
-            <button id="powerBtn" onclick="togglePower()" class="w-24 h-24 rounded-full border-4 border-slate-700 bg-slate-800 text-slate-500 text-3xl transition-all duration-300 shadow-inner hover:shadow-cyan-500/50 flex items-center justify-center mx-auto">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        <div class="glass p-8 text-center mb-8">
+            <button id="mainToggle" onclick="togglePower()" class="mb-4">
+                <svg id="powerIcon" xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 power-off transition-all duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
             </button>
-            <p id="powerText" class="mt-4 text-slate-500 font-bold">OFF</p>
+            <h2 id="statusLabel" class="text-xl font-bold text-slate-500">SYSTEM IDLE</h2>
         </div>
 
-        <div class="glass rounded-2xl p-6 shadow-xl">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-slate-300 text-sm uppercase">Sound Presets</h2>
-                <span id="currentPresetDisplay" class="text-cyan-400 font-bold tech-font">#01</span>
+        <div class="glass p-6">
+            <div class="flex justify-between items-center mb-6">
+                <span class="text-slate-400 uppercase text-xs font-bold tracking-widest">Sound Presets</span>
+                <span id="presetNum" class="text-cyan-400 aptech-font">#01</span>
             </div>
-            
-            <div class="grid grid-cols-5 gap-2 h-64 overflow-y-auto pr-2" id="presetGrid">
+            <div class="grid grid-cols-5 gap-3" id="gridContainer">
                 </div>
         </div>
-    </main>
-
-    <footer class="mt-8 text-slate-600 text-xs text-center">
-        &copy; 2024 Buzzer Sound by Aptech. <br> Powered by ESP8266 & Firebase.
-    </footer>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
-        // --- 1. FIREBASE CONFIG ---
         const firebaseConfig = {
             apiKey: "AIzaSyCm__tvAloG3xxPaqueJF--YZl5a8OHxzU",
             authDomain: "buzzer-pizo.firebaseapp.com",
@@ -81,101 +58,57 @@
             appId: "1:378505963414:web:662b584ca5c9e477a1dfb7"
         };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // --- 2. VARIABLES & UI ---
-        let isPowerOn = false;
-        let currentPreset = 1;
+        let isRunning = false;
+        let activePreset = 1;
 
-        const powerBtn = document.getElementById('powerBtn');
-        const powerText = document.getElementById('powerText');
-        const statusEl = document.getElementById('connectionStatus');
-        const presetGrid = document.getElementById('presetGrid');
-        const presetDisplay = document.getElementById('currentPresetDisplay');
-
-        // --- 3. GENERATE 50 BUTTONS ---
-        for (let i = 1; i <= 50; i++) {
-            const btn = document.createElement('button');
-            btn.innerText = i;
-            btn.className = `btn-preset h-10 w-full rounded bg-slate-700 text-slate-300 text-xs font-bold hover:bg-slate-600`;
-            btn.onclick = () => setPreset(i);
-            btn.id = `preset-${i}`;
-            presetGrid.appendChild(btn);
-        }
-
-        // --- 4. FUNCTIONS ---
-
-        function updatePowerUI(state) {
-            isPowerOn = state;
-            if (state) {
-                powerBtn.classList.remove('text-slate-500', 'border-slate-700');
-                powerBtn.classList.add('text-cyan-400', 'border-cyan-400', 'shadow-[0_0_20px_rgba(34,211,238,0.5)]');
-                powerText.innerText = "SYSTEM ACTIVE";
-                powerText.classList.replace('text-slate-500', 'text-cyan-400');
-            } else {
-                powerBtn.classList.add('text-slate-500', 'border-slate-700');
-                powerBtn.classList.remove('text-cyan-400', 'border-cyan-400', 'shadow-[0_0_20px_rgba(34,211,238,0.5)]');
-                powerText.innerText = "OFF";
-                powerText.classList.replace('text-cyan-400', 'text-slate-500');
-            }
-        }
-
-        function updatePresetUI(val) {
-            currentPreset = val;
-            presetDisplay.innerText = `#${val < 10 ? '0'+val : val}`;
-            
-            // Reset all buttons
-            document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
-            // Highlight selected
-            const activeBtn = document.getElementById(`preset-${val}`);
-            if(activeBtn) activeBtn.classList.add('active');
+        // Generate 50 Buttons
+        const container = document.getElementById('gridContainer');
+        for(let i=1; i<=50; i++) {
+            const b = document.createElement('button');
+            b.innerText = i;
+            b.id = `p-${i}`;
+            b.className = "neon-btn h-12 w-full rounded-xl text-sm font-bold aptech-font";
+            b.onclick = () => setPreset(i);
+            container.appendChild(b);
         }
 
         function togglePower() {
-            const newState = !isPowerOn;
-            // Optimistic UI Update (langsung berubah biar cepat)
-            updatePowerUI(newState);
-            // Kirim ke Firebase
-            db.ref('control/state').set(newState);
+            isRunning = !isRunning;
+            db.ref('control/state').set(isRunning);
         }
 
-        function setPreset(val) {
-            updatePresetUI(val);
-            db.ref('control/preset').set(val);
-            // Otomatis nyalakan jika memilih preset
-            if (!isPowerOn) {
-                togglePower();
-            }
+        function setPreset(n) {
+            activePreset = n;
+            db.ref('control/preset').set(n);
+            if(!isRunning) togglePower();
         }
 
-        // --- 5. LISTENERS (REALTIME UPDATE) ---
-        
-        // Cek Koneksi ke Firebase
-        const connectedRef = db.ref(".info/connected");
-        connectedRef.on("value", (snap) => {
-            if (snap.val() === true) {
-                statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-green-500"></span> ONLINE';
-                statusEl.classList.replace('text-red-500', 'text-green-500');
+        // Realtime Listeners
+        db.ref('control').on('value', snap => {
+            const data = snap.val();
+            isRunning = data.state;
+            activePreset = data.preset;
+
+            // UI Updates
+            const icon = document.getElementById('powerIcon');
+            const label = document.getElementById('statusLabel');
+            if(isRunning) {
+                icon.classList.replace('power-off', 'power-on');
+                label.innerText = "ACTIVE SOUNDING";
+                label.className = "text-xl font-bold text-cyan-400 animate-pulse";
             } else {
-                statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> OFFLINE';
-                statusEl.classList.replace('text-green-500', 'text-red-500');
+                icon.classList.replace('power-on', 'power-off');
+                label.innerText = "SYSTEM IDLE";
+                label.className = "text-xl font-bold text-slate-500";
             }
-        });
 
-        // Dengar perubahan STATE dari DB (misal diubah dari HP lain)
-        db.ref('control/state').on('value', (snapshot) => {
-            const val = snapshot.val();
-            updatePowerUI(val);
+            document.getElementById('presetNum').innerText = `#${activePreset.toString().padStart(2, '0')}`;
+            document.querySelectorAll('.neon-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`p-${activePreset}`).classList.add('active');
         });
-
-        // Dengar perubahan PRESET dari DB
-        db.ref('control/preset').on('value', (snapshot) => {
-            const val = snapshot.val() || 1;
-            updatePresetUI(val);
-        });
-
     </script>
 </body>
 </html>
